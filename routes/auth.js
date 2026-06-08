@@ -56,6 +56,7 @@ function publicEmp(e) {
     role: e.role,
     department_id: e.department_id,
     company_id: e.company_id,
+    company_code: e.company_code,
     expense_cat: e.expense_cat,
     must_reset: e.must_reset,
   };
@@ -66,7 +67,9 @@ router.post('/login', async (req, res) => {
   if (!emp_code || !password) {
     return res.status(400).json({ ok: false, error: 'Employee code and password are required' });
   }
-  const e = (await pool.query(`SELECT * FROM employees WHERE emp_code=$1`, [emp_code])).rows[0];
+  const e = (await pool.query(
+    `SELECT e.*, c.code AS company_code FROM employees e
+     JOIN companies c ON c.id = e.company_id WHERE e.emp_code=$1`, [emp_code])).rows[0];
   if (!e || !e.active || !e.password_hash) {
     return res.status(401).json({ ok: false, error: 'Invalid employee code or password' });
   }
@@ -111,7 +114,9 @@ router.post('/reset-request', async (req, res) => {
 });
 
 router.get('/me', requireAuth, async (req, res) => {
-  const e = (await pool.query(`SELECT * FROM employees WHERE id=$1`, [req.user.id])).rows[0];
+  const e = (await pool.query(
+    `SELECT e.*, c.code AS company_code FROM employees e
+     JOIN companies c ON c.id = e.company_id WHERE e.id=$1`, [req.user.id])).rows[0];
   if (!e) return res.status(404).json({ ok: false, error: 'Employee not found' });
   res.json({ ok: true, employee: publicEmp(e), apps: await appsFor(e) });
 });
