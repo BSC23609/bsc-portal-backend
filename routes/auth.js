@@ -60,6 +60,7 @@ function publicEmp(e) {
     company_id: e.company_id,
     company_code: e.company_code,
     expense_cat: e.expense_cat,
+    designation: e.job_title,
     must_reset: e.must_reset,
   };
 }

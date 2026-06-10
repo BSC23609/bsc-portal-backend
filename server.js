@@ -32,6 +32,7 @@ app.get('/health/db', async (req, res) => {
 // --- Routes ---
 app.use('/auth', require('./routes/auth'));
 app.use('/admin', require('./routes/admin'));
+app.use('/outpass', require('./routes/outpass'));
 app.use('/admin', require('./routes/admin'));
 
 const PORT = process.env.PORT || 3000;

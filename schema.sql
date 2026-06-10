@@ -89,3 +89,23 @@ CREATE INDEX IF NOT EXISTS idx_employees_company   ON employees(company_id);
 CREATE INDEX IF NOT EXISTS idx_employees_dept      ON employees(department_id);
 CREATE INDEX IF NOT EXISTS idx_apps_company        ON apps(company_id);
 CREATE INDEX IF NOT EXISTS idx_resets_status       ON password_resets(status);
+
+-- Outpass / Gatepass requests
+CREATE TABLE IF NOT EXISTS outpass_requests (
+  id             SERIAL PRIMARY KEY,
+  ref            TEXT UNIQUE NOT NULL,
+  employee_id    INTEGER NOT NULL REFERENCES employees(id),
+  type           TEXT NOT NULL CHECK (type IN ('outpass','gatepass')),
+  on_duty        BOOLEAN NOT NULL DEFAULT false,
+  entry_date     DATE NOT NULL,
+  purpose        TEXT NOT NULL,
+  out_time       TEXT NOT NULL,
+  in_time        TEXT,
+  approver_id    INTEGER NOT NULL REFERENCES employees(id),
+  status         TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','approved','rejected')),
+  reject_reason  TEXT,
+  created_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
+  decided_at     TIMESTAMPTZ
+);
+CREATE INDEX IF NOT EXISTS idx_outpass_employee ON outpass_requests(employee_id);
+CREATE INDEX IF NOT EXISTS idx_outpass_approver ON outpass_requests(approver_id, status);
