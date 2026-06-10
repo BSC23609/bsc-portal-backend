@@ -77,6 +77,14 @@ CREATE TABLE IF NOT EXISTS password_resets (
   resolved_at   TIMESTAMPTZ
 );
 
+-- Per-employee app access overrides (grant or restrict beyond department defaults)
+CREATE TABLE IF NOT EXISTS employee_app_access (
+  employee_id  INTEGER NOT NULL REFERENCES employees(id) ON DELETE CASCADE,
+  app_id       INTEGER NOT NULL REFERENCES apps(id) ON DELETE CASCADE,
+  allow        BOOLEAN NOT NULL,   -- true = granted, false = restricted
+  PRIMARY KEY (employee_id, app_id)
+);
+
 CREATE INDEX IF NOT EXISTS idx_employees_company   ON employees(company_id);
 CREATE INDEX IF NOT EXISTS idx_employees_dept      ON employees(department_id);
 CREATE INDEX IF NOT EXISTS idx_apps_company        ON apps(company_id);

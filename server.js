@@ -31,6 +31,8 @@ app.get('/health/db', async (req, res) => {
 
 // --- Routes ---
 app.use('/auth', require('./routes/auth'));
+app.use('/admin', require('./routes/admin'));
+app.use('/admin', require('./routes/admin'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`BSC Portal backend listening on :${PORT}`));

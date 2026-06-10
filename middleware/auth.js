@@ -22,4 +22,12 @@ function requireAuth(req, res, next) {
   }
 }
 
-module.exports = { signToken, requireAuth };
+function requireAdmin(req, res, next) {
+  if (!req.user) return res.status(401).json({ ok: false, error: 'Not logged in' });
+  if (req.user.role !== 'super_admin' && req.user.role !== 'company_admin') {
+    return res.status(403).json({ ok: false, error: 'Administrators only' });
+  }
+  next();
+}
+
+module.exports = { signToken, requireAuth, requireAdmin };

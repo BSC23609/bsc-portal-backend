@@ -25,7 +25,9 @@ async function appsFor(emp) {
          a.is_general = true
          OR EXISTS (SELECT 1 FROM app_access aa WHERE aa.app_id=a.id AND aa.department_id=$2)
          OR EXISTS (SELECT 1 FROM app_admins ax WHERE ax.app_id=a.id AND ax.employee_id=$3)
+         OR EXISTS (SELECT 1 FROM employee_app_access eg WHERE eg.app_id=a.id AND eg.employee_id=$3 AND eg.allow=true)
        )
+       AND NOT EXISTS (SELECT 1 FROM employee_app_access er WHERE er.app_id=a.id AND er.employee_id=$3 AND er.allow=false)
        ORDER BY a.launcher_group, a.sort_order, a.name`,
       [emp.company_id, emp.department_id, emp.id]
     )).rows;
